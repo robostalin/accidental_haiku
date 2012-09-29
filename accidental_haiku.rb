@@ -3,13 +3,20 @@ class AccidentalHaiku
 
   match /count (.*)/
 
+  def initialize(*args)
+    @total_syllables = 0
+    super
+  end
+
   def execute(message, string)
-    message.reply "A total of #{syllable_count(string)} syllables."
+    syllable_count = count_syllables(string)
+    @total_syllables += syllable_count
+    message.reply "#{syllable_count} more syllables for a total of #{@total_syllables} syllables."
   end
 
 protected
 
-  def syllable_count(string)
+  def count_syllables(string)
     # Original written by Elisabeth Hendrickson, Quality Tree Software, Inc.
     # Copyright (c) 2009 Quality Tree Software, Inc.
     #
