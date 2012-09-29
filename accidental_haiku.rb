@@ -1,17 +1,24 @@
 class AccidentalHaiku
   include Cinch::Plugin
 
-  match /count (.*)/
+  listen_to :message
 
   def initialize(*args)
-    @total_syllables = 0
     super
+
+    @haiku_target          = [5,7,5]
+    @current_haiku_counts  = []
+    @current_haiku_strings = []
   end
 
-  def execute(message, string)
-    syllable_count = count_syllables(string)
-    @total_syllables += syllable_count
-    message.reply "#{syllable_count} more syllables for a total of #{@total_syllables} syllables."
+  def listen(event)
+    @current_haiku_strings.push(event.message)
+    @current_haiku_strings.shift if @current_haiku_strings.length > 3
+
+    @current_haiku_counts.push(count_syllables(event.message))
+    @current_haiku_counts.shift if @current_haiku_counts.length > 3
+
+    event.reply "Haiku detected!" if @current_haiku_counts == @haiku_target
   end
 
 protected
